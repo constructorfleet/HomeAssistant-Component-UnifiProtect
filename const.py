@@ -116,18 +116,3 @@ CONTROLLER_CONFIG_SCHEMA = vol.Schema(
         ),
     }
 )
-
-ControllerConfig = TypedDict(
-    'ControllerConfig',
-    {
-        CONF_ID: Optional[str],
-        CONF_HOST: str,
-        CONF_PORT: int,
-        CONF_USERNAME: str,
-        CONF_PASSWORD: str,
-        CONF_SCAN_INTERVAL: int,
-        CONF_SNAPSHOT_DIRECT: bool,
-        CONF_IR_ON: str,
-        CONF_IR_OFF: str
-    }
-)

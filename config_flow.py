@@ -14,6 +14,7 @@ from homeassistant.const import (
 )
 from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
+from homeassistant.helpers.typing import HomeAssistantType
 from pyunifiprotect import UpvServer, NotAuthorized, NvrError
 
 from .const import (
@@ -25,6 +26,22 @@ from .const import (
     CONTROLLER_CONFIG_SCHEMA)
 
 _LOGGER = logging.getLogger(__name__)
+
+
+async def _get_controller_id(hass: HomeAssistantType, controller_config) -> str:
+    session = async_create_clientsession(
+        hass, cookie_jar=CookieJar(unsafe=True)
+    )
+
+    unifi_protect = UpvServer(
+        session,
+        controller_config[CONF_HOST],
+        controller_config[CONF_PORT],
+        controller_config[CONF_USERNAME],
+        controller_config[CONF_PASSWORD],
+    )
+
+    return await unifi_protect.unique_id()
 
 
 class UniFiProtectFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
@@ -46,20 +63,8 @@ class UniFiProtectFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         errors = {}
 
-        session = async_create_clientsession(
-            self.hass, cookie_jar=CookieJar(unsafe=True)
-        )
-
-        unifi_protect = UpvServer(
-            session,
-            user_input[CONF_HOST],
-            user_input[CONF_PORT],
-            user_input[CONF_USERNAME],
-            user_input[CONF_PASSWORD],
-        )
-
         try:
-            unique_id = await unifi_protect.unique_id()
+            unique_id = await _get_controller_id(self.hass, user_input)
         except NotAuthorized:
             errors["base"] = "connection_error"
             return await self._show_setup_form(errors)
@@ -106,7 +111,17 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_init(self, user_input=None):
         """Manage the options."""
         if user_input is not None:
-            return self.async_create_entry(title="", data=user_input)
+            try:
+                controller_id = await _get_controller_id(self.hass, user_input)
+                if controller_id:
+                    user_input[CONF_ID] = controller_id
+            except NotAuthorized:
+                return self.async_abort(reason="connection_error")
+            except NvrError:
+                return self.async_abort(reason="nvr_error")
+
+            if user_input.get(CONF_ID):
+                return self.async_create_entry(title=controller_id, data=user_input)
 
         return self.async_show_form(
             step_id="init",
