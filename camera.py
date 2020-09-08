@@ -1,13 +1,14 @@
-"""Support for Ubiquiti's Unifi Protect NVR."""
+"""Support for Ubiquiti's UniFi Protect NVR."""
 import logging
+
 from homeassistant.components.camera import SUPPORT_STREAM, Camera
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     ATTR_ATTRIBUTION,
     ATTR_LAST_TRIP_TIME,
 )
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.helpers import entity_platform
+from homeassistant.helpers.typing import HomeAssistantType
 
 from .const import (
     ATTR_CAMERA_ID,
@@ -26,15 +27,15 @@ from .const import (
     SAVE_THUMBNAIL_SCHEMA,
     SET_STATUS_LIGHT_SCHEMA,
 )
-from .entity import UnifiProtectEntity
+from .entity import UniFiProtectEntity
 
 _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
-    hass: HomeAssistantType, entry: ConfigEntry, async_add_entities
+        hass: HomeAssistantType, entry: ConfigEntry, async_add_entities
 ) -> None:
-    """Discover cameras on a Unifi Protect NVR."""
+    """Discover cameras on a UniFi Protect NVR."""
     upv_object = hass.data[DOMAIN][entry.entry_id]["upv"]
     coordinator = hass.data[DOMAIN][entry.entry_id]["coordinator"]
     snapshot_direct = hass.data[DOMAIN][entry.entry_id]["snapshot_direct"]
@@ -45,7 +46,7 @@ async def async_setup_entry(
 
     async_add_entities(
         [
-            UnifiProtectCamera(upv_object, coordinator, camera, snapshot_direct)
+            UniFiProtectCamera(upv_object, coordinator, camera, snapshot_direct)
             for camera in cameras
         ]
     )
@@ -73,11 +74,11 @@ async def async_setup_entry(
     return True
 
 
-class UnifiProtectCamera(UnifiProtectEntity, Camera):
-    """A Ubiquiti Unifi Protect Camera."""
+class UniFiProtectCamera(UniFiProtectEntity, Camera):
+    """A Ubiquiti UniFi Protect Camera."""
 
     def __init__(self, upv_object, coordinator, camera_id, snapshot_direct):
-        """Initialize an Unifi camera."""
+        """Initialize an UniFi camera."""
         super().__init__(upv_object, coordinator, camera_id, None)
         self._snapshot_direct = snapshot_direct
         self._name = self._camera_data["name"]
@@ -116,7 +117,7 @@ class UnifiProtectCamera(UnifiProtectEntity, Camera):
         return (
             True
             if self._camera_data["recording_mode"] != "never"
-            and self._camera_data["online"]
+               and self._camera_data["online"]
             else False
         )
 

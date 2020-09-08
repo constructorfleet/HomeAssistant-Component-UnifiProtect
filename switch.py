@@ -1,4 +1,4 @@
-""" This component provides Switches for Unifi Protect."""
+""" This component provides Switches for UniFi Protect."""
 
 import logging
 
@@ -19,12 +19,8 @@ from .const import (
     TYPE_RECORD_ALLWAYS,
     TYPE_RECORD_MOTION,
     TYPE_RECORD_NEVER,
-    TYPE_IR_AUTO,
-    TYPE_IR_OFF,
-    TYPE_IR_LED_OFF,
-    TYPE_IR_ON,
 )
-from .entity import UnifiProtectEntity
+from .entity import UniFiProtectEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -37,9 +33,9 @@ SWITCH_TYPES = {
 
 
 async def async_setup_entry(
-    hass: HomeAssistantType, entry: ConfigEntry, async_add_entities
+        hass: HomeAssistantType, entry: ConfigEntry, async_add_entities
 ) -> None:
-    """A Ubiquiti Unifi Protect Sensor."""
+    """A Ubiquiti UniFi Protect Sensor."""
     upv_object = hass.data[DOMAIN][entry.entry_id]["upv"]
     coordinator = hass.data[DOMAIN][entry.entry_id]["coordinator"]
     if not coordinator.data:
@@ -59,7 +55,7 @@ async def async_setup_entry(
     for switch in SWITCH_TYPES:
         for camera in coordinator.data:
             switches.append(
-                UnifiProtectSwitch(
+                UniFiProtectSwitch(
                     upv_object, coordinator, camera, switch, ir_on, ir_off,
                 )
             )
@@ -70,11 +66,11 @@ async def async_setup_entry(
     return True
 
 
-class UnifiProtectSwitch(UnifiProtectEntity, SwitchDevice):
-    """A Unifi Protect Switch."""
+class UniFiProtectSwitch(UniFiProtectEntity, SwitchDevice):
+    """A UniFi Protect Switch."""
 
     def __init__(self, upv_object, coordinator, camera_id, switch, ir_on, ir_off):
-        """Initialize an Unifi Protect Switch."""
+        """Initialize an UniFi Protect Switch."""
         super().__init__(upv_object, coordinator, camera_id, switch)
         self.upv = upv_object
         self._name = f"{SWITCH_TYPES[switch][0]} {self._camera_data['name']}"

@@ -1,10 +1,8 @@
-""" Config Flow to configure Unifi Protect Integration. """
+""" Config Flow to configure UniFi Protect Integration. """
 import logging
 
-from pyunifiprotect import UpvServer, NotAuthorized, NvrError
-
 import voluptuous as vol
-
+from aiohttp import CookieJar
 from homeassistant import config_entries
 from homeassistant.const import (
     CONF_ID,
@@ -14,33 +12,23 @@ from homeassistant.const import (
     CONF_PORT,
     CONF_SCAN_INTERVAL,
 )
-
-from homeassistant.config_entries import ConfigFlow
-
-from homeassistant import config_entries, core
-import homeassistant.helpers.config_validation as cv
 from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
-from aiohttp import CookieJar
+from pyunifiprotect import UpvServer, NotAuthorized, NvrError
 
 from .const import (
     DOMAIN,
-    DEFAULT_PORT,
     DEFAULT_SCAN_INTERVAL,
     CONF_SNAPSHOT_DIRECT,
     CONF_IR_ON,
     CONF_IR_OFF,
-    TYPE_IR_AUTO,
-    TYPE_IR_OFF,
-    TYPES_IR_OFF,
-    TYPES_IR_ON,
-)
+    CONTROLLER_CONFIG_SCHEMA)
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class UnifiProtectFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
-    """Handle a Unifi Protect config flow."""
+class UniFiProtectFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+    """Handle a UniFi Protect config flow."""
 
     VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_POLL
@@ -62,7 +50,7 @@ class UnifiProtectFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             self.hass, cookie_jar=CookieJar(unsafe=True)
         )
 
-        unifiprotect = UpvServer(
+        unifi_protect = UpvServer(
             session,
             user_input[CONF_HOST],
             user_input[CONF_PORT],
@@ -71,7 +59,7 @@ class UnifiProtectFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
         try:
-            unique_id = await unifiprotect.unique_id()
+            unique_id = await unifi_protect.unique_id()
         except NotAuthorized:
             errors["base"] = "connection_error"
             return await self._show_setup_form(errors)
@@ -103,22 +91,7 @@ class UnifiProtectFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         """Show the setup form to the user."""
         return self.async_show_form(
             step_id="user",
-            data_schema=vol.Schema(
-                {
-                    vol.Required(CONF_HOST): str,
-                    vol.Required(CONF_PORT, default=DEFAULT_PORT): int,
-                    vol.Required(CONF_USERNAME): str,
-                    vol.Required(CONF_PASSWORD): str,
-                    vol.Optional(
-                        CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL
-                    ): vol.All(vol.Coerce(int), vol.Range(min=2, max=20)),
-                    vol.Optional(CONF_SNAPSHOT_DIRECT, default=False): bool,
-                    vol.Optional(CONF_IR_ON, default=TYPE_IR_AUTO): vol.In(TYPES_IR_ON),
-                    vol.Optional(CONF_IR_OFF, default=TYPE_IR_OFF): vol.In(
-                        TYPES_IR_OFF
-                    ),
-                }
-            ),
+            data_schema=CONTROLLER_CONFIG_SCHEMA,
             errors=errors or {},
         )
 

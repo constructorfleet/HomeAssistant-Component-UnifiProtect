@@ -1,11 +1,13 @@
-""" Constant definitions for Unifi Protect Integration."""
+""" Constant definitions for UniFi Protect Integration."""
+
+from typing import TypedDict, Optional
 
 import voluptuous as vol
-from homeassistant.helpers import config_validation as cv
 from homeassistant.const import (
     ATTR_ENTITY_ID,
     CONF_FILENAME,
-)
+    CONF_HOST, CONF_PORT, CONF_USERNAME, CONF_PASSWORD, CONF_SCAN_INTERVAL, CONF_ID)
+from homeassistant.helpers import config_validation as cv
 
 DOMAIN = "unifiprotect"
 UNIQUE_ID = "unique_id"
@@ -26,7 +28,7 @@ CONF_IR_OFF = "ir_off"
 CONF_STATUS_LIGHT = "light_on"
 
 DEFAULT_PORT = 7443
-DEFAULT_ATTRIBUTION = "Powered by Unifi Protect Server"
+DEFAULT_ATTRIBUTION = "Powered by UniFi Protect Server"
 DEFAULT_BRAND = "Ubiquiti"
 DEFAULT_THUMB_WIDTH = 640
 DEFAULT_SCAN_INTERVAL = 2
@@ -95,5 +97,37 @@ SET_STATUS_LIGHT_SCHEMA = vol.Schema(
     {
         vol.Required(ATTR_ENTITY_ID): cv.entity_ids,
         vol.Optional(CONF_STATUS_LIGHT, default=True): vol.In(VALID_LIGHT_MODES),
+    }
+)
+
+CONTROLLER_CONFIG_SCHEMA = vol.Schema(
+    {
+        vol.Required(CONF_HOST): str,
+        vol.Required(CONF_PORT, default=DEFAULT_PORT): int,
+        vol.Required(CONF_USERNAME): str,
+        vol.Required(CONF_PASSWORD): str,
+        vol.Optional(
+            CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL
+        ): vol.All(vol.Coerce(int), vol.Range(min=2, max=20)),
+        vol.Optional(CONF_SNAPSHOT_DIRECT, default=False): bool,
+        vol.Optional(CONF_IR_ON, default=TYPE_IR_AUTO): vol.In(TYPES_IR_ON),
+        vol.Optional(CONF_IR_OFF, default=TYPE_IR_OFF): vol.In(
+            TYPES_IR_OFF
+        ),
+    }
+)
+
+ControllerConfig = TypedDict(
+    'ControllerConfig',
+    {
+        CONF_ID: Optional[str],
+        CONF_HOST: str,
+        CONF_PORT: int,
+        CONF_USERNAME: str,
+        CONF_PASSWORD: str,
+        CONF_SCAN_INTERVAL: int,
+        CONF_SNAPSHOT_DIRECT: bool,
+        CONF_IR_ON: str,
+        CONF_IR_OFF: str
     }
 )

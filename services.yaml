@@ -1,5 +1,5 @@
 save_thumbnail_image:
-  description: 'Request the lates motion thumbnail from a camera and write it to a file'
+  description: 'Request the latest motion thumbnail from a camera and write it to a file'
   fields:
     entity_id:
       description: 'string (required) camera to get thumbnail from'

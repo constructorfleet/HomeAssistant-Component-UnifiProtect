@@ -1,13 +1,13 @@
 {
-    "domain": "unifiprotect",
-    "name": "Unifi Protect",
-    "documentation": "https://github.com/constructorfleet/HomeAssistant-Component-UnifiProtect",
-    "config_flow": true,
-    "requirements": [
-        "pyunifiprotect==0.19.4"
-    ],
-    "dependencies": [],
-    "codeowners": [
-        "@Teagan42"
-    ]
+  "domain": "unifiprotect",
+  "name": "UniFi Protect",
+  "documentation": "https://github.com/constructorfleet/HomeAssistant-Component-UniFiProtect",
+  "config_flow": true,
+  "requirements": [
+    "pyunifiprotect==0.19.4"
+  ],
+  "dependencies": [],
+  "codeowners": [
+    "@Teagan42"
+  ]
 }

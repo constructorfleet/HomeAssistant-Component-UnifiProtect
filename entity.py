@@ -1,10 +1,10 @@
-from homeassistant.helpers.entity import Entity
 import homeassistant.helpers.device_registry as dr
+from homeassistant.helpers.entity import Entity
 
 from .const import DOMAIN, DEFAULT_BRAND
 
 
-class UnifiProtectEntity(Entity):
+class UniFiProtectEntity(Entity):
     """Base class for unifi protect entities."""
 
     def __init__(self, upv_object, coordinator, camera_id, sensor_type):

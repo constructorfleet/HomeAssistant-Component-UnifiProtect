@@ -1,4 +1,4 @@
-""" This component provides binary sensors for Unifi Protect."""
+""" This component provides binary sensors for UniFi Protect."""
 import logging
 
 try:
@@ -16,7 +16,6 @@ from homeassistant.const import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.typing import HomeAssistantType
-from homeassistant.util import slugify
 from .const import (
     ATTR_EVENT_SCORE,
     ATTR_EVENT_LENGTH,
@@ -24,15 +23,15 @@ from .const import (
     DEFAULT_ATTRIBUTION,
     DEVICE_CLASS_DOORBELL,
 )
-from .entity import UnifiProtectEntity
+from .entity import UniFiProtectEntity
 
 _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
-    hass: HomeAssistantType, entry: ConfigEntry, async_add_entities
+        hass: HomeAssistantType, entry: ConfigEntry, async_add_entities
 ) -> None:
-    """A Ubiquiti Unifi Protect Binary Sensor."""
+    """A Ubiquiti UniFi Protect Binary Sensor."""
     upv_object = hass.data[DOMAIN][entry.entry_id]["upv"]
     coordinator = hass.data[DOMAIN][entry.entry_id]["coordinator"]
     if not coordinator.data:
@@ -42,7 +41,7 @@ async def async_setup_entry(
     for camera in coordinator.data:
         if coordinator.data[camera]["type"] == DEVICE_CLASS_DOORBELL:
             sensors.append(
-                UnifiProtectBinarySensor(
+                UniFiProtectBinarySensor(
                     upv_object, coordinator, camera, DEVICE_CLASS_DOORBELL
                 )
             )
@@ -52,7 +51,7 @@ async def async_setup_entry(
             )
 
         sensors.append(
-            UnifiProtectBinarySensor(
+            UniFiProtectBinarySensor(
                 upv_object, coordinator, camera, DEVICE_CLASS_MOTION
             )
         )
@@ -65,8 +64,8 @@ async def async_setup_entry(
     return True
 
 
-class UnifiProtectBinarySensor(UnifiProtectEntity, BinarySensorDevice):
-    """A Unifi Protect Binary Sensor."""
+class UniFiProtectBinarySensor(UniFiProtectEntity, BinarySensorDevice):
+    """A UniFi Protect Binary Sensor."""
 
     def __init__(self, upv_object, coordinator, camera_id, sensor_type):
         """Initialize the Binary Sensor."""

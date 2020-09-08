@@ -1,18 +1,18 @@
-""" This component provides sensors for Unifi Protect."""
+""" This component provides sensors for UniFi Protect."""
 import logging
 
-from homeassistant.helpers.entity import Entity
-from homeassistant.const import ATTR_ATTRIBUTION
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import ATTR_ATTRIBUTION
+from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.typing import HomeAssistantType
+
 from .const import (
     ATTR_CAMERA_TYPE,
-    ATTR_EVENT_SCORE,
     DOMAIN,
     DEFAULT_ATTRIBUTION,
     TYPE_RECORD_NEVER,
 )
-from .entity import UnifiProtectEntity
+from .entity import UniFiProtectEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -22,9 +22,9 @@ SENSOR_TYPES = {
 
 
 async def async_setup_entry(
-    hass: HomeAssistantType, entry: ConfigEntry, async_add_entities
+        hass: HomeAssistantType, entry: ConfigEntry, async_add_entities
 ) -> None:
-    """A Ubiquiti Unifi Protect Sensor."""
+    """A Ubiquiti UniFi Protect Sensor."""
     upv_object = hass.data[DOMAIN][entry.entry_id]["upv"]
     coordinator = hass.data[DOMAIN][entry.entry_id]["coordinator"]
     if not coordinator.data:
@@ -33,7 +33,7 @@ async def async_setup_entry(
     sensors = []
     for sensor in SENSOR_TYPES:
         for camera in coordinator.data:
-            sensors.append(UnifiProtectSensor(upv_object, coordinator, camera, sensor))
+            sensors.append(UniFiProtectSensor(upv_object, coordinator, camera, sensor))
             _LOGGER.debug("UNIFIPROTECT SENSOR CREATED: %s", sensor)
 
     async_add_entities(sensors, True)
@@ -41,11 +41,11 @@ async def async_setup_entry(
     return True
 
 
-class UnifiProtectSensor(UnifiProtectEntity, Entity):
-    """A Ubiquiti Unifi Protect Sensor."""
+class UniFiProtectSensor(UniFiProtectEntity, Entity):
+    """A Ubiquiti UniFi Protect Sensor."""
 
     def __init__(self, upv_object, coordinator, camera_id, sensor):
-        """Initialize an Unifi Protect sensor."""
+        """Initialize an UniFi Protect sensor."""
         super().__init__(upv_object, coordinator, camera_id, sensor)
         self._name = f"{SENSOR_TYPES[sensor][0]} {self._camera_data['name']}"
         self._units = SENSOR_TYPES[sensor][1]
