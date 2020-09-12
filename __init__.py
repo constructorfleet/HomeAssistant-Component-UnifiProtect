@@ -9,7 +9,7 @@ import homeassistant.helpers.device_registry as dr
 import voluptuous as vol
 from aiohttp import CookieJar
 from aiohttp.client_exceptions import ServerDisconnectedError
-from homeassistant.config_entries import ConfigEntry, SOURCE_IMPORT
+from homeassistant.config_entries import ConfigEntry, SOURCE_USER
 from homeassistant.const import (
     CONF_ID,
     CONF_HOST,
@@ -64,7 +64,7 @@ async def async_setup(hass: HomeAssistantType, config: ConfigType) -> bool:
             hass.async_create_task(
                 hass.config_entries.flow.async_init(
                     DOMAIN,
-                    context={"source": SOURCE_IMPORT},
+                    context={"source": SOURCE_USER},
                     data=controller_config
                 )
             )
