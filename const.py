@@ -1,6 +1,6 @@
 """ Constant definitions for UniFi Protect Integration."""
 
-from typing import TypedDict, Optional
+from typing import Optional
 
 import voluptuous as vol
 from homeassistant.const import (
